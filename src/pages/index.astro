@@ -17,7 +17,7 @@ const faqAnswersMap = Object.fromEntries(
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <script is:inline>
@@ -34,9 +34,18 @@ const faqAnswersMap = Object.fromEntries(
   <body>
     <StarfieldBackground enabled={nebeeConfig.enableBackgroundEffect ?? true} />
 
-    <!-- Ukryty formularz statyczny dla bota Netlify Forms -->
-    <form name="nebu-lead-capture" method="POST" data-netlify="true" hidden>
-      <input type="text" name="email" />
+    <!-- Ukryty formularz statyczny rejestrowany przez Netlify Forms -->
+    <form
+      name="nebu-lead-capture"
+      method="POST"
+      action="/"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      hidden
+    >
+      <input type="hidden" name="form-name" value="nebu-lead-capture" />
+      <input type="text" name="bot-field" />
+      <input type="email" name="email" />
       <textarea name="question"></textarea>
       <textarea name="clickedTopics"></textarea>
     </form>
@@ -58,155 +67,231 @@ const faqAnswersMap = Object.fromEntries(
       </svg>
     </button>
 
-    <main class="stage">
-      <!-- Brand Header -->
-      <header class="brand-header">
-        <div class="logo-wrapper">
-          <img
-            src={nebuLogo.src}
-            alt={nebeeConfig.logoAlt}
-            class="brand-logo"
-            loading="eager"
-          />
-        </div>
-        <p class="tagline">{nebeeConfig.tagline}</p>
-      </header>
+    <div class="page-content" id="pageContent">
+      <main class="stage">
+        <!-- Brand Header -->
+        <header class="brand-header" id="brandHeader">
+          <div class="logo-wrapper">
+            <img
+              src={nebuLogo.src}
+              alt={nebeeConfig.logoAlt}
+              class="brand-logo"
+              loading="eager"
+            />
+          </div>
+          <h1 class="hero-title" set:html={nebeeConfig.heroTitleHtml} />
+          <p class="tagline" set:html={nebeeConfig.tagline} />
+        </header>
 
-      <!-- Widget Shell -->
-      <div class="widget-shell" id="widgetShell">
+        <!-- Widget Shell -->
+        <div class="widget-shell" id="widgetShell">
 
-        <!-- 1. CLOSED STATE: Initial Pill Trigger -->
-        <button type="button" class="pill-trigger" id="openChatBtn" aria-expanded="false">
-          <span class="avatar-badge" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <rect x="7" y="8" width="3.5" height="8" rx="1.75" fill="currentColor" />
-              <rect x="13.5" y="8" width="3.5" height="8" rx="1.75" fill="currentColor" />
-            </svg>
-          </span>
-          <span class="pill-label">{nebeeConfig.pillLabel}</span>
-        </button>
+          <!-- 1. CLOSED STATE: Initial Pill Trigger -->
+          <button type="button" class="pill-trigger" id="openChatBtn" aria-expanded="false">
+            <span class="avatar-badge" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <rect x="7" y="8" width="3.5" height="8" rx="1.75" fill="currentColor" />
+                <rect x="13.5" y="8" width="3.5" height="8" rx="1.75" fill="currentColor" />
+              </svg>
+            </span>
+            <span class="pill-label">{nebeeConfig.pillLabel}</span>
+          </button>
 
-        <!-- 2. OPEN STATE: Full Chat Dialog Box -->
-        <section
-          class="chat-card"
-          id="chatCard"
-          aria-label={`Chat with ${nebeeConfig.botName}`}
-          hidden
-          data-bot-name={nebeeConfig.botName}
-          data-cleared-msg={nebeeConfig.clearedMessage}
-          data-default-placeholder={nebeeConfig.inputPlaceholder}
-          data-email-placeholder={nebeeConfig.emailPlaceholder || "Enter your e-mail..."}
-          data-custom-prompt-html={nebeeConfig.customQuestionPromptHtml || `I see you have a specific question and a vision for what you want to build. Drop your e-mail below and wave to us so we can stay in touch — or simply write to <a href="mailto:${nebeeConfig.contactEmail}">${nebeeConfig.contactEmail}</a>.`}
-          data-fallback-html={nebeeConfig.defaultFallbackHtml}
-          data-submit-html={nebeeConfig.formSubmitReplyHtml}
-          data-contact-email={nebeeConfig.contactEmail}
-        >
-          <!-- Top Header Bar -->
-          <div class="chat-header">
-            <div class="chat-header-info">
-              <span class="avatar-badge">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <rect x="7" y="8" width="3.5" height="8" rx="1.75" fill="currentColor" />
-                  <rect x="13.5" y="8" width="3.5" height="8" rx="1.75" fill="currentColor" />
-                </svg>
-              </span>
-              <div class="header-text">
-                <div class="header-title">{nebeeConfig.botName}</div>
-                <div class="header-subtitle">{nebeeConfig.botSubtitle}</div>
+          <!-- 2. OPEN STATE: Full Chat Dialog Box -->
+          <section
+            class="chat-card"
+            id="chatCard"
+            aria-label={`Chat with ${nebeeConfig.botName}`}
+            hidden
+            data-bot-name={nebeeConfig.botName}
+            data-cleared-msg={nebeeConfig.clearedMessage}
+            data-default-placeholder={nebeeConfig.inputPlaceholder}
+            data-email-placeholder={nebeeConfig.emailPlaceholder || "Enter your e-mail..."}
+            data-custom-prompt-html={nebeeConfig.customQuestionPromptHtml || `I see you have a specific question and a vision for what you want to build. Drop your e-mail below and wave to us so we can stay in touch — or simply write to <a href="mailto:${nebeeConfig.contactEmail}">${nebeeConfig.contactEmail}</a>.`}
+            data-fallback-html={nebeeConfig.defaultFallbackHtml}
+            data-submit-html={nebeeConfig.formSubmitReplyHtml}
+            data-contact-email={nebeeConfig.contactEmail}
+          >
+            <!-- Top Header Bar -->
+            <div class="chat-header">
+              <div class="chat-header-info">
+                <span class="avatar-badge">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <rect x="7" y="8" width="3.5" height="8" rx="1.75" fill="currentColor" />
+                    <rect x="13.5" y="8" width="3.5" height="8" rx="1.75" fill="currentColor" />
+                  </svg>
+                </span>
+                <div class="header-text">
+                  <div class="header-title">{nebeeConfig.botName}</div>
+                  <div class="header-subtitle">{nebeeConfig.botSubtitle}</div>
+                </div>
+              </div>
+              <div class="header-actions">
+                <button type="button" class="action-text-btn" id="clearChatBtn">Clear</button>
+                <button type="button" class="close-btn" id="closeChatBtn" aria-label="Close window">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" />
+                  </svg>
+                </button>
               </div>
             </div>
-            <div class="header-actions">
-              <button type="button" class="action-text-btn" id="clearChatBtn">Clear</button>
-              <button type="button" class="close-btn" id="closeChatBtn" aria-label="Close window">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" />
-                </svg>
-              </button>
+
+            <!-- Messages History -->
+            <div class="chat-body" id="chatMessages">
+              <div class="message-group bot">
+                <div class="bubble">{nebeeConfig.welcomeMessage}</div>
+                <div class="meta">{nebeeConfig.botName} · AI agent · Just now</div>
+              </div>
             </div>
-          </div>
 
-          <!-- Messages History -->
-          <div class="chat-body" id="chatMessages">
-            <div class="message-group bot">
-              <div class="bubble">{nebeeConfig.welcomeMessage}</div>
-              <div class="meta">{nebeeConfig.botName} · AI agent · Just now</div>
-            </div>
-          </div>
-
-          <!-- FAQ Interactive Chips -->
-          <div
-            class="quick-prompts"
-            id="quickPrompts"
-            data-answers={JSON.stringify(faqAnswersMap)}
-          >
-            {nebeeFaqItems.map((item) => (
-              <button type="button" class="chip" data-key={item.key} data-label={item.label}>
-                {item.label}
-              </button>
-            ))}
-          </div>
-
-          <!-- Bottom Input Pill -->
-          <div class="chat-footer">
-            <div class="input-row" id="inputRow">
-              <form
-                name="nebu-leads"
-                method="POST"
-                data-netlify="true"
-                class="input-pill"
-                id="leadForm"
-              >
-                <input type="hidden" name="form-name" value="nebu-leads" />
-                <input
-                  type="text"
-                  name="message"
-                  id="userInput"
-                  placeholder={nebeeConfig.inputPlaceholder}
-                  required
-                  autocomplete="off"
-                />
-                <button type="submit" class="send-btn" id="sendBtn" aria-label="Send message">
-                  <!-- Strzałka w trybie standardowym -->
-                  <svg class="send-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                  <!-- Machająca dłoń + "Send" w trybie podawania e-maila -->
-                  <span class="wave-send-content" aria-hidden="true">
-                    <svg class="wave-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
-                      <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path>
-                      <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path>
-                      <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path>
-                    </svg>
-                    <span>Send</span>
-                  </span>
+            <!-- FAQ Interactive Chips -->
+            <div
+              class="quick-prompts"
+              id="quickPrompts"
+              data-answers={JSON.stringify(faqAnswersMap)}
+            >
+              {nebeeFaqItems.map((item) => (
+                <button type="button" class="chip" data-key={item.key} data-label={item.label}>
+                  {item.label}
                 </button>
-              </form>
-
-              <!-- Czerwone kółko 34x34 z krzyżykiem w tym samym miejscu, co wcześniej strzałka -->
-              <button
-                type="button"
-                class="cancel-email-btn"
-                id="cancelEmailBtn"
-                aria-label="Cancel email step and return to question"
-                title="Back to question"
-                hidden
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </button>
+              ))}
             </div>
 
-            <div class="privacy-note">
-              {nebeeConfig.botName} answers from{" "}
-              <a href={`mailto:${nebeeConfig.contactEmail}`}>{nebeeConfig.contactEmail}</a>.{" "}
-              <a href={`mailto:${nebeeConfig.contactEmail}`}>Privacy policy</a>
+            <!-- Bottom Input Pill -->
+            <div class="chat-footer">
+              <div class="input-row" id="inputRow">
+                <form
+                  name="nebu-leads"
+                  method="POST"
+                  action="/"
+                  data-netlify="true"
+                  class="input-pill"
+                  id="leadForm"
+                >
+                  <input type="hidden" name="form-name" value="nebu-leads" />
+                  <input
+                    type="text"
+                    name="message"
+                    id="userInput"
+                    placeholder={nebeeConfig.inputPlaceholder}
+                    required
+                    autocomplete="off"
+                  />
+                  <button type="submit" class="send-btn" id="sendBtn" aria-label="Send message">
+                    <svg class="send-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span class="wave-send-content" aria-hidden="true">
+                      <svg class="wave-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
+                        <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path>
+                        <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path>
+                        <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path>
+                      </svg>
+                      <span>Send</span>
+                    </span>
+                  </button>
+                </form>
+
+                <button
+                  type="button"
+                  class="cancel-email-btn"
+                  id="cancelEmailBtn"
+                  aria-label="Cancel email step and return to question"
+                  title="Back to question"
+                  hidden
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="privacy-note">
+                {nebeeConfig.botName} answers from nebu.studio.{" "}
+                <button type="button" class="privacy-link-btn" id="openPrivacyBtn">
+                  Privacy policy
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- Popup / Modal Polityki Prywatności -->
+    <div
+      class="privacy-backdrop"
+      id="privacyBackdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="privacyModalTitle"
+      hidden
+    >
+      <section class="privacy-modal" id="privacyModal">
+        <div class="chat-header">
+          <div class="chat-header-info">
+            <div class="header-text">
+              <div class="header-title" id="privacyModalTitle">Privacy Policy</div>
+              <div class="header-subtitle">nebu.studio · Last updated: 20.11.26</div>
             </div>
           </div>
-        </section>
-      </div>
-    </main>
+          <div class="header-actions">
+            <button type="button" class="close-btn" id="closePrivacyBtn" aria-label="Close privacy policy">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="privacy-modal-body">
+          <h3>1. Introduction</h3>
+          <p>
+            This Privacy Policy outlines how <strong>nebu.studio</strong> ("we", "us", or "our") gathers, uses, cares for, and discloses information from visitors and users ("you" or "users") of the nebu.studio website ("Site"). It applies to the Site and every digital product, design service, and resource provided by nebu.studio.
+          </p>
+
+          <h3>2. Personal Identification Information</h3>
+          <p>
+            You are welcome to explore the Site anonymously. We only collect personal details when you choose to share them—for instance, when you submit a project inquiry, leave your e-mail address in the assistant, ask for a quote, sign up for updates, or place an order. Depending on the interaction, this may include your name, e-mail address, company details, billing or delivery information, or message content. You can always decline to provide optional details, though doing so may prevent certain requests or services from being completed.
+          </p>
+
+          <h3>3. Non-Personal Identification Information</h3>
+          <p>
+            Whenever you interact with the Site, non-identifying technical data may be recorded automatically, such as your browser version, device type, operating system, screen resolution, referring page, and basic network/connection details required to deliver the Site properly.
+          </p>
+
+          <h3>4. How We Use Collected Information</h3>
+          <p>nebu.studio may use information you share for the following purposes:</p>
+          <ul>
+            <li><strong>Customer &amp; project support:</strong> Responding to inquiries, questions, and scope discussions clearly and promptly;</li>
+            <li><strong>Experience &amp; product improvement:</strong> Understanding how visitors use the Site so we can refine layouts, content, and workflows;</li>
+            <li><strong>Orders &amp; payments:</strong> Processing transactions and delivering requested work solely to fulfill what you ordered;</li>
+            <li><strong>Direct communication:</strong> Replying to your messages or sending occasional updates when you opt in (with easy opt-out options at any time).</li>
+          </ul>
+
+          <h3>5. How We Protect Your Information</h3>
+          <p>
+            We follow sensible technical and organizational practices to protect personal and inquiry data handled via the Site against unauthorized access, alteration, loss, or disclosure. While we take care to protect your data, no method of online transmission or storage can be guaranteed completely secure.
+          </p>
+
+          <h3>6. Sharing Your Personal Information</h3>
+          <p>
+            We do not sell, trade, or rent users' personal identification information to third parties. We may share aggregated, anonymous usage statistics with partners, or work with trusted service providers (such as hosting, form handling, or communication tools) strictly as needed to operate the Site and respond to your requests under confidentiality obligations.
+          </p>
+
+          <h3>7. Cookies</h3>
+          <p>
+            The Site keeps small pieces of data in your browser needed for core functionality, such as your selected theme and cookie preferences. Optional analytics cookies (Google Analytics, Microsoft Clarity) or marketing cookies (Google Ads, Meta, X, Apollo) are only used when permitted. Aggregate visit counting via privacy-focused tools (such as Plausible and Ahrefs Web Analytics) does not set tracking cookies or identify you individually. When you submit a form or book a call, session context—such as pages visited, buttons clicked, time on site, device type, and approximate location (city and country)—may accompany the inquiry to help us understand what you looked for. Prior to submission, this context stays in your current browser tab and is cleared when you close the tab. You can review or adjust your choice anytime via cookie settings, and preferences are remembered for 6 months.
+          </p>
+
+          <h3>8. Changes to This Privacy Policy</h3>
+          <p>
+            nebu.studio may update this Privacy Policy periodically as the Site and services evolve. Whenever we make changes, we will update the "Last updated" date above. Checking this page occasionally is the best way to stay informed about how we handle information.
+          </p>
+        </div>
+      </section>
+    </div>
 
     <script is:inline>
       const themeToggle = document.getElementById('themeToggle');
@@ -241,11 +326,47 @@ const faqAnswersMap = Object.fromEntries(
         }
       });
 
+      // Privacy Policy modal
+      const openPrivacyBtn = document.getElementById('openPrivacyBtn');
+      const closePrivacyBtn = document.getElementById('closePrivacyBtn');
+      const privacyBackdrop = document.getElementById('privacyBackdrop');
+
+      function openPrivacyModal() {
+        if (!privacyBackdrop) return;
+        privacyBackdrop.hidden = false;
+        document.body.style.overflow = 'hidden';
+        if (closePrivacyBtn) closePrivacyBtn.focus();
+      }
+
+      function closePrivacyModal() {
+        if (!privacyBackdrop) return;
+        privacyBackdrop.hidden = true;
+        document.body.style.overflow = '';
+        if (openPrivacyBtn) openPrivacyBtn.focus();
+      }
+
+      if (openPrivacyBtn) openPrivacyBtn.addEventListener('click', openPrivacyModal);
+      if (closePrivacyBtn) closePrivacyBtn.addEventListener('click', closePrivacyModal);
+      if (privacyBackdrop) {
+        privacyBackdrop.addEventListener('click', (e) => {
+          if (e.target === privacyBackdrop) {
+            closePrivacyModal();
+          }
+        });
+      }
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && privacyBackdrop && !privacyBackdrop.hidden) {
+          closePrivacyModal();
+        }
+      });
+
+      // Logika widżetu czatu Nebee + przechwytywanie leada
       const shell = document.getElementById('widgetShell');
       const openBtn = document.getElementById('openChatBtn');
       const closeBtn = document.getElementById('closeChatBtn');
       const clearBtn = document.getElementById('clearChatBtn');
       const chatCard = document.getElementById('chatCard');
+      const brandHeader = document.getElementById('brandHeader');
       const stage = document.querySelector('.stage');
       const form = document.getElementById('leadForm');
       const input = document.getElementById('userInput');
@@ -273,6 +394,7 @@ const faqAnswersMap = Object.fromEntries(
       let clickedTopics = [];
       let pendingCustomQuestion = null;
       let awaitingEmail = false;
+      let closeChatTimer = null;
 
       function exitEmailMode(focusInput = true) {
         awaitingEmail = false;
@@ -302,6 +424,14 @@ const faqAnswersMap = Object.fromEntries(
 
       function openChat() {
         if (!shell || !openBtn || !chatCard || !stage) return;
+        if (closeChatTimer) {
+          clearTimeout(closeChatTimer);
+          closeChatTimer = null;
+        }
+        if (brandHeader) {
+          brandHeader.style.transform = '';
+        }
+        openBtn.setAttribute('aria-expanded', 'true');
         openBtn.style.display = 'none';
         stage.classList.add('chat-is-open');
         chatCard.hidden = false;
@@ -313,12 +443,39 @@ const faqAnswersMap = Object.fromEntries(
 
       function closeChat() {
         if (!shell || !openBtn || !chatCard || !stage) return;
+        if (closeChatTimer) {
+          clearTimeout(closeChatTimer);
+          closeChatTimer = null;
+        }
+
+        // Zapamiętujemy aktualną pozycję nagłówka, żeby zniknięcie wysokiego chatCard nie „zrzuciło” go w dół
+        let headerTopBefore = 0;
+        if (brandHeader) {
+          headerTopBefore = brandHeader.getBoundingClientRect().top;
+        }
+
+        openBtn.setAttribute('aria-expanded', 'false');
         chatCard.classList.remove('is-visible');
         stage.classList.remove('chat-is-open');
-        setTimeout(() => {
+
+        closeChatTimer = setTimeout(() => {
           chatCard.hidden = true;
           openBtn.style.display = 'inline-flex';
-        }, 300);
+
+          if (brandHeader) {
+            const headerTopAfter = brandHeader.getBoundingClientRect().top;
+            const deltaY = headerTopBefore - headerTopAfter;
+            if (Math.abs(deltaY) > 0.5) {
+              brandHeader.style.transition = 'none';
+              brandHeader.style.transform = `translate3d(0, ${deltaY}px, 0)`;
+              void brandHeader.offsetHeight;
+              brandHeader.style.transition = 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)';
+              brandHeader.style.transform = 'translate3d(0, 0, 0)';
+            }
+          }
+
+          closeChatTimer = null;
+        }, 220);
       }
 
       function clearChat() {
@@ -467,18 +624,18 @@ const faqAnswersMap = Object.fromEntries(
         --text-muted: #64748b;
         --badge-bg: #0b131e;
         --badge-fg: #ffffff;
-        /* Błękit waga ~300 dla motywu jasnego */
-        --user-bubble: #7dd3fc;
-        --user-fg: #082f49;
-        --tech-blue: #0284c7;
-        --tech-blue-border-700: #0369a1;
+        --tech-blue-300: #99c0ff;
+        --tech-blue: #0062FF;
+        --tech-blue-700: #003b99;
+        --user-bubble: var(--tech-blue-300);
+        --user-fg: #001f52;
         --danger: #dc2626;
         --danger-hover: #b91c1c;
         --shadow-pill: 0 4px 20px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.04);
         --shadow-card: 0 24px 60px -12px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.04);
         --scrollbar-thumb: rgba(0, 0, 0, 0.18);
-        --link-color: #0369a1;
-        --logo-height: 56px;
+        --link-color: #0062FF;
+        --logo-height: 28px;
         --logo-filter: brightness(0) saturate(100%) invert(6%) sepia(15%) saturate(1800%) hue-rotate(185deg) brightness(95%) contrast(96%);
         color-scheme: light;
       }
@@ -493,17 +650,14 @@ const faqAnswersMap = Object.fromEntries(
         --text-muted: #9ca3af;
         --badge-bg: #f4f4f5;
         --badge-fg: #0a0a0b;
-        /* Błękit waga ~700 dla motywu ciemnego */
-        --user-bubble: #0369a1;
+        --user-bubble: var(--tech-blue-700);
         --user-fg: #ffffff;
-        --tech-blue: #0284c7;
-        --tech-blue-border-700: #0369a1;
         --danger: #ef4444;
         --danger-hover: #dc2626;
         --shadow-pill: 0 4px 20px rgba(0, 0, 0, 0.4);
         --shadow-card: 0 24px 60px -12px rgba(0, 0, 0, 0.65);
         --scrollbar-thumb: rgba(255, 255, 255, 0.22);
-        --link-color: #38bdf8;
+        --link-color: #66a1ff;
         --logo-filter: none;
         color-scheme: dark;
       }
@@ -514,19 +668,22 @@ const faqAnswersMap = Object.fromEntries(
         padding: 0;
       }
 
-      .chat-body::-webkit-scrollbar {
+      .chat-body::-webkit-scrollbar,
+      .privacy-modal-body::-webkit-scrollbar {
         width: 5px;
       }
-      .chat-body::-webkit-scrollbar-track {
+      .chat-body::-webkit-scrollbar-track,
+      .privacy-modal-body::-webkit-scrollbar-track {
         background: transparent;
       }
-      .chat-body::-webkit-scrollbar-thumb {
+      .chat-body::-webkit-scrollbar-thumb,
+      .privacy-modal-body::-webkit-scrollbar-thumb {
         background: var(--scrollbar-thumb);
         border-radius: 999px;
       }
 
       body {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         background-color: var(--bg);
         color: var(--text);
         min-height: 100dvh;
@@ -535,7 +692,7 @@ const faqAnswersMap = Object.fromEntries(
         justify-content: center;
         padding: 24px;
         -webkit-font-smoothing: antialiased;
-        transition: background-color 0.35s ease, color 0.35s ease;
+        transition: background-color 0.45s ease, color 0.45s ease;
       }
 
       body::after {
@@ -545,12 +702,20 @@ const faqAnswersMap = Object.fromEntries(
         z-index: 0;
         pointer-events: none;
         background: radial-gradient(
-          ellipse 78% 72% at 50% 50%,
-          transparent 45%,
-          color-mix(in srgb, var(--bg) 55%, transparent) 78%,
-          var(--bg) 100%
+          circle at 50% 50%,
+          transparent 62%,
+          color-mix(in srgb, var(--bg) 16%, transparent) 100%
         );
-        transition: background 0.35s ease;
+        transition: background 0.45s ease;
+      }
+
+      .page-content {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .theme-toggle {
@@ -595,30 +760,32 @@ const faqAnswersMap = Object.fromEntries(
         display: none;
       }
 
+      /* Łagodny, płynny powrót do środka bez efektu ciężkiego opadania */
       .stage {
         position: relative;
         z-index: 1;
         width: 100%;
-        max-width: 620px;
+        max-width: 740px;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 28px;
-        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        transform: translate3d(0, 0, 0);
+        transition: transform 0.42s cubic-bezier(0.25, 0.8, 0.25, 1);
       }
 
       .stage.chat-is-open {
-        transform: translateY(-16px);
+        transform: translate3d(0, -16px, 0);
       }
 
       .brand-header {
         text-align: center;
-        max-width: 460px;
+        max-width: 720px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 14px;
-        transition: opacity 0.3s ease;
+        gap: 32px;
+        will-change: transform;
       }
 
       .logo-wrapper {
@@ -635,14 +802,26 @@ const faqAnswersMap = Object.fromEntries(
         transition: filter 0.3s ease;
       }
 
+      .hero-title {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 700;
+        font-size: clamp(2.35rem, 5.8vw, 58px);
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        color: var(--text);
+      }
+
       .tagline {
+        margin-top: -16px;
+        max-width: 540px;
         font-size: 0.95rem;
-        line-height: 1.6;
+        line-height: 1.65;
         color: var(--text-muted);
       }
 
       .widget-shell {
         width: 100%;
+        max-width: 620px;
         display: flex;
         justify-content: center;
       }
@@ -696,9 +875,9 @@ const faqAnswersMap = Object.fromEntries(
         display: flex;
         flex-direction: column;
         opacity: 0;
-        transform: translateY(12px) scale(0.98);
-        transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        transform: translate3d(0, 10px, 0) scale(0.985);
+        transition: opacity 0.22s ease,
+                    transform 0.22s cubic-bezier(0.25, 0.8, 0.25, 1),
                     background-color 0.35s ease;
       }
 
@@ -708,7 +887,7 @@ const faqAnswersMap = Object.fromEntries(
 
       .chat-card.is-visible {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translate3d(0, 0, 0) scale(1);
       }
 
       .chat-header {
@@ -717,6 +896,7 @@ const faqAnswersMap = Object.fromEntries(
         justify-content: space-between;
         padding: 14px 18px;
         border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
       }
 
       .chat-header-info {
@@ -934,7 +1114,7 @@ const faqAnswersMap = Object.fromEntries(
 
       .input-pill:focus-within {
         border-color: var(--text);
-        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02), 0 0 0 3px rgba(0, 68, 56, 0.12);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02), 0 0 0 3px rgba(0, 98, 255, 0.12);
       }
 
       .input-pill input {
@@ -990,12 +1170,14 @@ const faqAnswersMap = Object.fromEntries(
       .input-pill.is-email-mode,
       .input-pill.is-email-mode:focus-within {
         background: var(--tech-blue);
-        border: 1px solid var(--tech-blue-border-700);
+        border: 1px solid var(--tech-blue-700);
         box-shadow: none;
+        outline: none;
       }
 
       .input-pill.is-email-mode input {
         color: #ffffff;
+        outline: none;
       }
 
       .input-pill.is-email-mode input::placeholder {
@@ -1058,10 +1240,83 @@ const faqAnswersMap = Object.fromEntries(
         color: var(--text-muted);
       }
 
-      .privacy-note a {
+      .privacy-link-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        font: inherit;
         color: var(--link-color);
         text-decoration: underline;
         text-underline-offset: 2px;
+        cursor: pointer;
+      }
+
+      .privacy-link-btn:hover {
+        opacity: 0.85;
+      }
+
+      .privacy-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(10, 10, 11, 0.72);
+      }
+
+      .privacy-backdrop[hidden] {
+        display: none;
+      }
+
+      .privacy-modal {
+        width: 100%;
+        max-width: 640px;
+        max-height: min(84dvh, 720px);
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+        border-radius: 20px;
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        opacity: 1;
+        transform: none;
+      }
+
+      .privacy-modal-body {
+        padding: 20px 22px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        font-size: 0.86rem;
+        line-height: 1.65;
+        color: var(--text);
+      }
+
+      .privacy-modal-body h3 {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-top: 6px;
+        color: var(--text);
+      }
+
+      .privacy-modal-body h3:first-child {
+        margin-top: 0;
+      }
+
+      .privacy-modal-body p,
+      .privacy-modal-body ul {
+        color: var(--text-muted);
+      }
+
+      .privacy-modal-body ul {
+        padding-left: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
       }
     </style>
   </body>

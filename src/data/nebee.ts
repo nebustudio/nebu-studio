@@ -7,8 +7,9 @@ export interface NebeeFaqItem {
 export const nebeeConfig = {
   brandName: "nebu.studio",
   logoAlt: "nebu.studio — Digital Product & Brand Design",
+  heroTitleHtml: "We elevate and refine<br />high-impact products",
   tagline:
-    "Designing digital products, visual systems, and high-impact websites. New studio experience coming soon.",
+    "Delivering comprehensive design and branding that transforms products into market leaders, ensuring a seamless transition from strategy<br />to technical execution.",
   pillLabel: "Ask Nebee",
   botName: "Nebee",
   botSubtitle: "nebu.studio AI assistant · the team can also help",
