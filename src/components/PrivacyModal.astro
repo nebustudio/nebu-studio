@@ -1,0 +1,181 @@
+---
+interface Props {
+  lastUpdated?: string;
+}
+
+const { lastUpdated = "20.11.26" } = Astro.props;
+---
+
+<div
+  class="privacy-backdrop"
+  id="privacyBackdrop"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="privacyModalTitle"
+  hidden
+>
+  <section class="privacy-modal" id="privacyModal">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="header-text">
+          <div class="header-title" id="privacyModalTitle">Privacy Policy</div>
+          <div class="header-subtitle">nebu.studio · Last updated: {lastUpdated}</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="close-btn" id="closePrivacyBtn" aria-label="Close privacy policy">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="privacy-modal-body">
+      <h3>1. Introduction</h3>
+      <p>
+        This Privacy Policy outlines how <strong>nebu.studio</strong> ("we", "us", or "our") gathers, uses, cares for, and discloses information from visitors and users ("you" or "users") of the nebu.studio website ("Site"). It applies to the Site and every digital product, design service, and resource provided by nebu.studio.
+      </p>
+
+      <h3>2. Personal Identification Information</h3>
+      <p>
+        You are welcome to explore the Site anonymously. We only collect personal details when you choose to share them—for instance, when you submit a project inquiry, leave your e-mail address in the assistant, ask for a quote, sign up for updates, or place an order. Depending on the interaction, this may include your name, e-mail address, company details, billing or delivery information, or message content. You can always decline to provide optional details, though doing so may prevent certain requests or services from being completed.
+      </p>
+
+      <h3>3. Non-Personal Identification Information</h3>
+      <p>
+        Whenever you interact with the Site, non-identifying technical data may be recorded automatically, such as your browser version, device type, operating system, screen resolution, referring page, and basic network/connection details required to deliver the Site properly.
+      </p>
+
+      <h3>4. How We Use Collected Information</h3>
+      <p>nebu.studio may use information you share for the following purposes:</p>
+      <ul>
+        <li><strong>Customer &amp; project support:</strong> Responding to inquiries, questions, and scope discussions clearly and promptly;</li>
+        <li><strong>Experience &amp; product improvement:</strong> Understanding how visitors use the Site so we can refine layouts, content, and workflows;</li>
+        <li><strong>Orders &amp; payments:</strong> Processing transactions and delivering requested work solely to fulfill what you ordered;</li>
+        <li><strong>Direct communication:</strong> Replying to your messages or sending occasional updates when you opt in (with easy opt-out options at any time).</li>
+      </ul>
+
+      <h3>5. How We Protect Your Information</h3>
+      <p>
+        We follow sensible technical and organizational practices to protect personal and inquiry data handled via the Site against unauthorized access, alteration, loss, or disclosure. While we take care to protect your data, no method of online transmission or storage can be guaranteed completely secure.
+      </p>
+
+      <h3>6. Sharing Your Personal Information</h3>
+      <p>
+        We do not sell, trade, or rent users' personal identification information to third parties. We may share aggregated, anonymous usage statistics with partners, or work with trusted service providers (such as hosting, form handling, or communication tools) strictly as needed to operate the Site and respond to your requests under confidentiality obligations.
+      </p>
+
+      <h3>7. Cookies</h3>
+      <p>
+        The Site keeps small pieces of data in your browser needed for core functionality, such as your selected theme and cookie preferences. Optional analytics cookies (Google Analytics, Microsoft Clarity) or marketing cookies (Google Ads, Meta, X, Apollo) are only used when permitted. Aggregate visit counting via privacy-focused tools (such as Plausible and Ahrefs Web Analytics) does not set tracking cookies or identify you individually. When you submit a form or book a call, session context—such as pages visited, buttons clicked, time on site, device type, and approximate location (city and country)—may accompany the inquiry to help us understand what you looked for. Prior to submission, this context stays in your current browser tab and is cleared when you close the tab. You can review or adjust your choice anytime via cookie settings, and preferences are remembered for 6 months.
+      </p>
+
+      <h3>8. Changes to This Privacy Policy</h3>
+      <p>
+        nebu.studio may update this Privacy Policy periodically as the Site and services evolve. Whenever we make changes, we will update the "Last updated" date above. Checking this page occasionally is the best way to stay informed about how we handle information.
+      </p>
+    </div>
+  </section>
+</div>
+
+<script is:inline>
+  const openPrivacyBtn = document.getElementById('openPrivacyBtn');
+  const closePrivacyBtn = document.getElementById('closePrivacyBtn');
+  const privacyBackdrop = document.getElementById('privacyBackdrop');
+
+  function openPrivacyModal() {
+    if (!privacyBackdrop) return;
+    privacyBackdrop.hidden = false;
+    document.body.style.overflow = 'hidden';
+    if (closePrivacyBtn) closePrivacyBtn.focus();
+  }
+
+  function closePrivacyModal() {
+    if (!privacyBackdrop) return;
+    privacyBackdrop.hidden = true;
+    document.body.style.overflow = '';
+    if (openPrivacyBtn) openPrivacyBtn.focus();
+  }
+
+  if (openPrivacyBtn) openPrivacyBtn.addEventListener('click', openPrivacyModal);
+  if (closePrivacyBtn) closePrivacyBtn.addEventListener('click', closePrivacyModal);
+  if (privacyBackdrop) {
+    privacyBackdrop.addEventListener('click', (e) => {
+      if (e.target === privacyBackdrop) {
+        closePrivacyModal();
+      }
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && privacyBackdrop && !privacyBackdrop.hidden) {
+      closePrivacyModal();
+    }
+  });
+</script>
+
+<style is:global>
+  .privacy-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(10, 10, 11, 0.72);
+  }
+
+  .privacy-backdrop[hidden] {
+    display: none;
+  }
+
+  .privacy-modal {
+    width: 100%;
+    max-width: 640px;
+    max-height: min(84dvh, 720px);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transform: none;
+  }
+
+  .privacy-modal-body {
+    padding: 20px 22px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.86rem;
+    line-height: 1.65;
+    color: var(--text);
+  }
+
+  .privacy-modal-body h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 6px;
+    color: var(--text);
+  }
+
+  .privacy-modal-body h3:first-child {
+    margin-top: 0;
+  }
+
+  .privacy-modal-body p,
+  .privacy-modal-body ul {
+    color: var(--text-muted);
+  }
+
+  .privacy-modal-body ul {
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+</style>
